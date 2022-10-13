@@ -1,29 +1,20 @@
-interface PointsToDistance {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-}
-
 export class Point {
-  private x: number;
-  private y: number;
+  private x: number = 0;
+  private y: number = 0;
 
   constructor();
   constructor(x: number, y: number);
-  constructor(x?: unknown, y?: unknown) {
+  constructor(x?: number, y?: number) {
     if (typeof x === "number" && typeof y === "number") {
       this.x = x;
       this.y = y;
       return;
     }
-    this.x = 0;
-    this.y = 0;
   }
 
-  private calculateDistance({ x1, y1, x2, y2 }: PointsToDistance): number {
-    const a = x1 - x2;
-    const b = y1 - y2;
+  private calculateDistance(x1, y1): number {
+    const a = x1 - this.x;
+    const b = y1 - this.y;
     return Math.sqrt(a * a + b * b);
   }
 
@@ -42,25 +33,15 @@ export class Point {
   public distance(): number;
   public distance(point: Point): number;
   public distance(x: number, y: number): number;
-  public distance(x?: unknown, y?: unknown): number {
-    if (typeof x === "number" && typeof y === "number") {
-      return this.calculateDistance({
-        x1: this.x,
-        y1: this.y,
-        x2: x,
-        y2: y,
-      });
+  public distance(xOrPoint?: number | Point, y?: number): number {
+    if (typeof xOrPoint === "number" && typeof y === "number") {
+      return this.calculateDistance(xOrPoint, y);
     }
 
-    if (x instanceof Point) {
-      return this.calculateDistance({
-        x1: this.x,
-        y1: this.y,
-        x2: x.getX(),
-        y2: x.getY(),
-      });
+    if (xOrPoint instanceof Point) {
+      return this.calculateDistance(xOrPoint.getX(), xOrPoint.getY());
     }
 
-    return this.calculateDistance({ x1: this.x, y1: this.y, x2: 0, y2: 0 });
+    return this.calculateDistance(0, 0);
   }
 }
