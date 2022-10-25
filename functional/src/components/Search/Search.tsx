@@ -1,29 +1,39 @@
-import { useState, FC } from 'react';
+import { useState, FC, useEffect, Dispatch } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 
+import { Row, TableAction, ActionKind } from 'src/types';
+
 import styles from './Search.module.scss';
 
 interface SearchProps {
-  store?: {};
-  updateStore?: (val) => void;
+  store?: Row[];
+  updateStore?: Dispatch<TableAction>;
 }
 
-// OR
+const searchFunction =
+  (value: string) =>
+  ({ country, name, username }: Row) => {
+    return (
+      country.toLowerCase() === value ||
+      name.toLowerCase() === value ||
+      username.toLowerCase() === value
+    );
+  };
 
-//interface SearchProps {
-//  selected?: {};
-//  updateSelected?: (val) => void;
-//}
-
-// OR store can be global
-
-export const Search: FC<SearchProps> = props => {
+export const Search: FC<SearchProps> = ({ store, updateStore }) => {
   const [searchedValue, setSearchedValue] = useState('');
 
+  useEffect(() => {
+    const value = searchedValue.toLowerCase();
+    updateStore({
+      type: ActionKind.SEARCH,
+      payload: store.filter(searchFunction(value)),
+    });
+  }, [searchedValue]);
+
   const onChange = value => {
-    console.log(value); // for debugging
     setSearchedValue(value);
   };
 

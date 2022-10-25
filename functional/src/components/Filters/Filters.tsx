@@ -1,21 +1,14 @@
-import { useState, FC } from 'react';
+import { useState, FC, useEffect, Dispatch } from 'react';
 import Checkbox from '@mui/material/Checkbox';
+
+import { Row, TableAction, ActionKind } from 'src/types';
 
 import styles from './Filters.module.scss';
 
 interface FiltersProps {
-  store?: {};
-  updateStore?: (val) => void;
+  store?: Row[];
+  updateStore?: Dispatch<TableAction>;
 }
-
-// OR
-
-//interface FiltersProps {
-//  selected?: {};
-//  updateSelected?: (val) => void;
-//}
-
-// OR store can be global
 
 const OPTIONS = [
   {
@@ -26,15 +19,32 @@ const OPTIONS = [
   },
 ];
 
-export const Filters: FC<FiltersProps> = props => {
+const isFilterSelected = selectedFilter => title =>
+  selectedFilter.find(filter => filter === title);
+
+const withoutPostFn = (row: Row) => row.posts === 0;
+const moreThan100Fn = (row: Row) => row.posts > 100;
+
+export const Filters: FC<FiltersProps> = ({ store, updateStore }) => {
   const [selectedFilter, setSelectedFilter] = useState<string[]>([]);
 
+  useEffect(() => {
+    let payload = [];
+    if (isFilterSelected(selectedFilter)('Without posts')) {
+      payload = store.filter(withoutPostFn);
+    }
+
+    if (isFilterSelected(selectedFilter)('More than 100 posts')) {
+      payload = store.filter(moreThan100Fn);
+    }
+
+    updateStore({ type: ActionKind.FILTER, payload });
+  }, [selectedFilter]);
+
   const onChange = ({ title }) => {
-    console.log(title); // for debugging
+    let updatedFilters: string[];
 
-    let updatedFilters;
-
-    if (selectedFilter.find(filter => filter === title)) {
+    if (isFilterSelected(selectedFilter)(title)) {
       updatedFilters = selectedFilter.filter(filter => filter !== title);
     } else {
       updatedFilters = [...selectedFilter, title];
@@ -59,7 +69,7 @@ export const Filters: FC<FiltersProps> = props => {
               size="small"
               color="primary"
               onChange={() => onChange(option)}
-            />{' '}
+            />
             {option.title}
           </li>
         ))}

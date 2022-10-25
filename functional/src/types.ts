@@ -26,6 +26,27 @@ export interface Row {
   username: string;
   country: string;
   name: string;
-  lastPeyments: number;
+  lastPayments: number;
   posts: number;
+}
+
+export const enum ActionKind {
+  INITIAL = 'INITIAL',
+  FILTER = 'FILTER',
+  SEARCH = 'SEARCH',
+  SORT = 'SORT',
+}
+
+export interface TableAction {
+  type: ActionKind;
+  payload?: Row[];
+  sortFunction?: (a: Row, b: Row) => number;
+}
+
+export interface TableState {
+  rows: Row[];
+  filteredRows: Row[];
+  renderedRows: Row[];
+  searchedRows: Row[];
+  sortFunction: ((a: Row, b: Row) => number) | undefined;
 }

@@ -1,29 +1,34 @@
-import { FC } from 'react';
+import { Dispatch, FC } from 'react';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
+import { ActionKind, Row, TableAction } from 'src/types';
+
 import styles from './Sort.module.scss';
 
+const ascFunction = (a: Row, b: Row) => a.lastPayments - b.lastPayments;
+const descFunction = (a: Row, b: Row) => b.lastPayments - a.lastPayments;
+
 interface SortProps {
-  store?: {};
-  updateStore?: (val) => void;
+  store?: Row[];
+  updateStore?: Dispatch<TableAction>;
 }
 
-// OR
-
-//interface SortProps {
-//  selected?: {};
-//  updateSelected?: (val) => void;
-//}
-
-// OR store can be global
-
-export const Sort: FC<SortProps> = props => {
+export const Sort: FC<SortProps> = ({ store, updateStore }) => {
   const handleChange = value => {
-    console.log(value); // for debugging
+    let sortFunction;
+    if (value === 'asc') {
+      sortFunction = ascFunction;
+    }
+
+    if (value === 'desc') {
+      sortFunction = descFunction;
+    }
+
+    updateStore({ type: ActionKind.SORT, sortFunction });
   };
 
   return (
