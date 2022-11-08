@@ -1,19 +1,17 @@
 import { Shipment } from "src/Shipment";
 
 interface Builder {
-  setWeight(w: number);
-  setFromAddress(s: string);
-  setFromZipCode(s: string);
-  setToAddress(s: string);
-  setToZipCode(s: string);
+  setWeight(w: number): void;
+  setFromAddress(s: string): void;
+  setFromZipCode(s: string): void;
+  setToAddress(s: string): void;
+  setToZipCode(s: string): void;
 }
 
 export class ClientBuilder implements Builder {
   private shipment: Shipment;
 
-  constructor() {
-    this.shipment = Shipment.getInstance();
-  }
+  constructor() {}
 
   setWeight(w: number) {
     this.shipment.setWeight(w);

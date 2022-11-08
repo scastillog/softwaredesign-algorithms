@@ -1,25 +1,21 @@
-export class Shipment {
-  private static shipment: Shipment;
-  private static countId: number = 0;
+import { ShipperFactory, Shipper } from "src/Shipper";
+
+export abstract class Shipment {
+  public static countId: number = 0;
   private static costPerOunce: number = 39;
 
-  private shipmentId: number = 0;
-  private weight: number; // ounces
+  public shipper: Shipper;
+
+  protected weight: number; // ounces
+  public shipmentId: number = 0;
   public fromAddress: string;
   public fromZipCode: string;
   public toAddress: string;
   public toZipCode: string;
 
-  private constructor() {
+  constructor() {
     this.shipmentId = Shipment.countId++;
-  }
-
-  public static getInstance(): Shipment {
-    if (!Shipment.shipment) {
-      Shipment.shipment = new Shipment();
-    }
-
-    return Shipment.shipment;
+    this.shipper = new ShipperFactory().makeShipper(this.fromZipCode);
   }
 
   getCost() {
@@ -68,5 +64,27 @@ export class Shipment {
 
   getToZipCode() {
     return this.toZipCode;
+  }
+}
+
+interface Strategy {
+  getCostByShipment(weight: number): number;
+}
+
+export class Letter extends Shipment implements Strategy {
+  getCostByShipment(weight: number): number {
+    return this.shipper.getCostByLetter() * weight;
+  }
+}
+
+export class Package extends Shipment {
+  getCostByShipment(weight: number): number {
+    return this.shipper.getCostByPackage() * weight;
+  }
+}
+
+export class Oversize extends Shipment {
+  getCostByShipment(weight: number): number {
+    return this.shipper.getCostByOversize(weight);
   }
 }
