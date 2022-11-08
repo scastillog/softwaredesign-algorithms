@@ -1,5 +1,12 @@
 {
+  "module": "commonjs",
   "compilerOptions": {
-    "types": ["node"]
-  }
+    "baseUrl": "./",
+    "types": ["node"],
+    "paths": { "src/*": ["src/*"] }
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
+  "exclude": ["node_modules"]
 }
