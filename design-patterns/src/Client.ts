@@ -1,4 +1,4 @@
-import { Shipment } from "src/Shipment";
+import { ShipmentDecorator, Shipment } from "src/Shipment";
 
 interface Builder {
   setWeight(w: number): void;
@@ -9,9 +9,11 @@ interface Builder {
 }
 
 export class ClientBuilder implements Builder {
-  private shipment: Shipment;
+  private shipment: ShipmentDecorator;
 
-  constructor() {}
+  constructor(shipment: Shipment) {
+    this.shipment = new ShipmentDecorator(shipment);
+  }
 
   setWeight(w: number) {
     this.shipment.setWeight(w);
@@ -27,6 +29,18 @@ export class ClientBuilder implements Builder {
   }
   setToZipCode(s: string) {
     this.shipment.setToZipCode(s);
+  }
+
+  setFragile() {
+    this.shipment.setFragile();
+  }
+
+  setImportant() {
+    this.shipment.setImportant();
+  }
+
+  setNeedReceipt() {
+    this.shipment.setNeedRecipt();
   }
 
   getShipment() {
@@ -47,5 +61,6 @@ export class Client {
     this.builder.setFromZipCode("11111");
     this.builder.setToAddress("street jhon");
     this.builder.setToZipCode("11121");
+    this.builder.setFragile();
   }
 }

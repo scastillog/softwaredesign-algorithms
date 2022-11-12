@@ -88,3 +88,42 @@ export class Oversize extends Shipment {
     return this.shipper.getCostByOversize(weight);
   }
 }
+
+const MARK_FRAGILE = "**MARK FRAGILE** \n";
+const MARK_IMPORTANT = "**MARK DO NOT LEAVE IF ADDRESS NOT AT HOME** \n";
+const MARK_RECIPT = "**MARK RETURN RECEIPT REQUESTED** \n";
+export class ShipmentDecorator extends Shipment {
+  protected shipment: Shipment;
+  isFragile: boolean = false;
+  isImportant: boolean = false;
+  needRecipt: boolean = false;
+
+  constructor(shipment: Shipment) {
+    super();
+    this.shipment = shipment;
+  }
+
+  setFragile() {
+    this.isFragile = true;
+  }
+
+  setImportant() {
+    this.isImportant = true;
+  }
+
+  setNeedRecipt() {
+    this.needRecipt = true;
+  }
+
+  public ship(): string {
+    const fragileString = this.isFragile && MARK_FRAGILE;
+    const importantString = this.isImportant && MARK_IMPORTANT;
+    const receiptString = this.needRecipt && MARK_RECIPT;
+    return (
+      `${this.shipment.ship()}\n` +
+      fragileString +
+      importantString +
+      receiptString
+    );
+  }
+}
